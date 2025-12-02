@@ -21,7 +21,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use("/clothingItems", require("./routes/clothingItems"));
+app.use("/items", require("./routes/clothingItems"));
 app.use("/users", require("./routes/users"));
 
 const { PORT = 3001 } = process.env;
