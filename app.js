@@ -2,6 +2,8 @@ const path = require("path");
 const express = require("express");
 const mongoose = require("mongoose");
 
+const { NOT_FOUND } = require("./utils/errors");
+
 const app = express();
 
 mongoose
@@ -23,6 +25,9 @@ app.use((req, res, next) => {
 
 app.use("/items", require("./routes/clothingItems"));
 app.use("/users", require("./routes/users"));
+app.use((req, res) => {
+  res.status(NOT_FOUND).json({ message: "Requested resource not found" });
+});
 
 const { PORT = 3001 } = process.env;
 
