@@ -28,6 +28,8 @@ module.exports.getUser = (req, res) => {
       console.log(err.name);
       if (err.name === "CastError") {
         res.status(BAD_REQUEST).send({ message: err.message });
+      } else if (err.name === "DocumentNotFoundError") {
+        res.status(NOT_FOUND).send({ message: err.message });
       } else {
         res.status(INTERNAL_SERVER_ERROR).send({ message: err.message });
       }
