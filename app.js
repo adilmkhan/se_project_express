@@ -18,13 +18,13 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use((req, res, next) => {
   req.user = {
-    _id: "692b95e93f4fb21354a05cab", // Replace with your actual test user ID
+    _id: "692b95e93f4fb21354a05cab",
   };
   next();
 });
 
-app.use("/items", require("./routes/clothingItems"));
-app.use("/users", require("./routes/users"));
+app.use("/", require("./routes/index"));
+
 app.use((req, res) => {
   res.status(NOT_FOUND).json({ message: "Requested resource not found" });
 });

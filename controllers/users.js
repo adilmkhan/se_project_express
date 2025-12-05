@@ -3,14 +3,13 @@ const {
   BAD_REQUEST,
   NOT_FOUND,
   INTERNAL_SERVER_ERROR,
-} = require("../utils/errors.js");
+} = require("../utils/errors");
 
 module.exports.getUsers = (req, res) => {
   User.find({})
     .then((users) => res.send({ data: users }))
     .catch((err) => {
       console.error(err);
-      console.log(err.name);
       if (err.name === "CastError") {
         res.status(BAD_REQUEST).send({ message: err.message });
       } else {
@@ -25,7 +24,6 @@ module.exports.getUser = (req, res) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       console.error(err);
-      console.log(err.name);
       if (err.name === "CastError") {
         res.status(BAD_REQUEST).send({ message: err.message });
       } else if (err.name === "DocumentNotFoundError") {
@@ -43,7 +41,6 @@ module.exports.createUser = (req, res) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       console.error(err);
-      console.log(err.name);
       if (err.name === "ValidationError") {
         res.status(BAD_REQUEST).send({ message: err.message });
       } else {
