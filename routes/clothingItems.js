@@ -7,10 +7,12 @@ const {
   dislikeclothingItem,
 } = require("../controllers/clothingItems");
 
+const auth = require("../middlewares/auth");
+
 router.get("/", getclothingItems);
-router.post("/", createclothingItem);
-router.delete("/:itemId", deleteclothingItem);
-router.put("/:itemId/likes", likeclothingItem);
-router.delete("/:itemId/likes", dislikeclothingItem);
+router.post("/", auth, createclothingItem);
+router.delete("/:itemId", auth, deleteclothingItem);
+router.put("/:itemId/likes", auth, likeclothingItem);
+router.delete("/:itemId/likes", auth, dislikeclothingItem);
 
 module.exports = router;

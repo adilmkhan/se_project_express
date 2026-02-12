@@ -25,8 +25,37 @@ module.exports.getUsers = (req, res) => {
     });
 };
 
-module.exports.getUser = (req, res) => {
-  User.findById(req.params.id)
+const auth = require("../middlewares/auth");
+
+module.exports.updateProfile = (req, res) => {
+  const { name, avatar } = req.body; // Only allow these fields
+  const userId = req.user._id; // From auth middleware
+
+  User.findByIdAndUpdate(
+    userId,
+    { name, avatar }, // Only update these fields
+    {
+      new: true, // Return updated document
+      runValidators: true, // Enable validation
+    }
+  )
+    .then((user) => {
+      if (!user) {
+        return res.status(NOT_FOUND).send({ message: "User not found" });
+      }
+      res.send(user);
+    })
+    .catch((err) => {
+      if (err.name === "ValidationError") {
+        res.status(BAD_REQUEST).send({ message: "Invalid data" });
+      } else {
+        res.status(INTERNAL_SERVER_ERROR).send({ message: "Server error" });
+      }
+    });
+};
+
+module.exports.getCurrentUser = (req, res) => {
+  User.findById(req.user._id)
     .orFail()
     .then((user) => res.send({ data: user }))
     .catch((err) => {
