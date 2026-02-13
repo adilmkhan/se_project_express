@@ -1,13 +1,12 @@
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 const {
   BAD_REQUEST,
   NOT_FOUND,
   INTERNAL_SERVER_ERROR,
   CONFLICT,
-  UNAUTHORIZED,
 } = require("../utils/errors");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
 const JWT_SECRET = require("../utils/config");
 
 module.exports.getUsers = (req, res) => {
@@ -25,8 +24,6 @@ module.exports.getUsers = (req, res) => {
     });
 };
 
-const auth = require("../middlewares/auth");
-
 module.exports.updateProfile = (req, res) => {
   const { name, avatar } = req.body;
   const userId = req.user._id;
@@ -43,7 +40,7 @@ module.exports.updateProfile = (req, res) => {
       if (!user) {
         return res.status(NOT_FOUND).send({ message: "User not found" });
       }
-      res.send(user);
+      return res.send(user);
     })
     .catch((err) => {
       if (err.name === "ValidationError") {
