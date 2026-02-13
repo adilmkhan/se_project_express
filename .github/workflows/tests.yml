@@ -61,10 +61,8 @@ jobs:
         working-directory: se-actions-tests-p
         run: bash ./bin/test-config.sh
 
-      - name: Start MongoDB
+      - name: Wait for MongoDB
         run: |
-          sudo systemctl start mongod
-          sudo systemctl enable mongod
           sleep 5
 
       - name: Run Pre endpoints for 12
