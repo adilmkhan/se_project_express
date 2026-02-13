@@ -52,9 +52,10 @@ jobs:
         run: bash ./bin/test-config.sh
 
       - name: Start MongoDB
-        uses: supercharge/mongodb-github-action@1.6.0
+        uses: supercharge/mongodb-github-action@1.10.0
         with:
-          mongodb-version: "4.4"
+          mongodb-version: "6.0"
+          mongodb-port: 27017
 
       - name: Run Pre endpoints for 12
         if: ${{ needs.get_sprint_number.outputs.base_sprint == 12 }}
