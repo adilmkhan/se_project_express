@@ -3,7 +3,6 @@ const { login, createUser } = require("../controllers/users");
 
 const auth = require("../middlewares/auth");
 
-//Auth routes(no /users prefix)
 router.post("/signin", login);
 router.post("/signup", createUser);
 

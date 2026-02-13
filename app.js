@@ -20,13 +20,6 @@ mongoose
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// app.use((req, res, next) => {
-//   req.user = {
-//     _id: "692b95e93f4fb21354a05cab",
-//   };
-//   next();
-// });
-
 app.use("/", require("./routes/index"));
 
 app.use((req, res) => {

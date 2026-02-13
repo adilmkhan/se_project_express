@@ -24,7 +24,7 @@ module.exports = (req, res, next) => {
     return handleAuthError(res);
   }
 
-  req.user = payload; // adding the payload to the Request object
+  req.user = payload;
 
-  next(); // passing the request further along
+  next();
 };

@@ -28,15 +28,15 @@ module.exports.getUsers = (req, res) => {
 const auth = require("../middlewares/auth");
 
 module.exports.updateProfile = (req, res) => {
-  const { name, avatar } = req.body; // Only allow these fields
-  const userId = req.user._id; // From auth middleware
+  const { name, avatar } = req.body;
+  const userId = req.user._id;
 
   User.findByIdAndUpdate(
     userId,
-    { name, avatar }, // Only update these fields
+    { name, avatar },
     {
-      new: true, // Return updated document
-      runValidators: true, // Enable validation
+      new: true,
+      runValidators: true,
     }
   )
     .then((user) => {
@@ -118,6 +118,6 @@ module.exports.login = (req, res) => {
       });
     })
     .catch((err) => {
-      res.status(UNAUTHORIZED).send({ message: err.message });
+      res.status(BAD_REQUEST).send({ message: err.message });
     });
 };

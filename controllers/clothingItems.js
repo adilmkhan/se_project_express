@@ -43,11 +43,9 @@ module.exports.deleteclothingItem = (req, res) => {
   ClothingItem.findById(req.params.itemId)
     .orFail()
     .then((item) => {
-      // Check ownership BEFORE deleting
       if (item.owner.toString() !== req.user._id.toString()) {
         return Promise.reject(new Error("Operation not Allowed"));
       }
-      // If owner matches, then delete
       return ClothingItem.findByIdAndDelete(req.params.itemId);
     })
     .then((deletedItem) => {
