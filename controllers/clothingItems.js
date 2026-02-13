@@ -3,6 +3,7 @@ const {
   BAD_REQUEST,
   NOT_FOUND,
   INTERNAL_SERVER_ERROR,
+  FORBIDDEN,
 } = require("../utils/errors");
 
 module.exports.getclothingItems = (req, res) => {
@@ -39,15 +40,27 @@ module.exports.createclothingItem = (req, res) => {
 };
 
 module.exports.deleteclothingItem = (req, res) => {
-  ClothingItem.findByIdAndDelete(req.params.itemId)
+  ClothingItem.findById(req.params.itemId)
     .orFail()
-    .then((item) => res.send({ data: item }))
+    .then((item) => {
+      // Check ownership BEFORE deleting
+      if (item.owner.toString() !== req.user._id.toString()) {
+        return Promise.reject(new Error("Operation not Allowed"));
+      }
+      // If owner matches, then delete
+      return ClothingItem.findByIdAndDelete(req.params.itemId);
+    })
+    .then((deletedItem) => {
+      res.send({ data: deletedItem });
+    })
     .catch((err) => {
       console.error(err);
-      if (err.name === "CastError") {
+      if (err.message === "Operation not Allowed") {
+        res.status(FORBIDDEN).send({ message: "Operation not allowed" });
+      } else if (err.name === "CastError") {
         res.status(BAD_REQUEST).send({ message: "Invalid data" });
       } else if (err.name === "DocumentNotFoundError") {
-        res.status(NOT_FOUND).send({ message: "Invalid data" });
+        res.status(NOT_FOUND).send({ message: "Item not found" });
       } else {
         res
           .status(INTERNAL_SERVER_ERROR)

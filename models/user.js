@@ -30,23 +30,29 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     minlength: 8,
+    select: false,
   },
 });
 
 userSchema.statics.findUserByCredentials = function (email, password) {
-  return this.findOne({ email }).then((user) => {
-    if (!user) {
-      return Promise.reject(new Error("Incorrect password or email"));
-    }
+  return (
+    this.findOne({ email })
+      .select("+password")
+      // the password hash will be there, in the user object
+      .then((user) => {
+        if (!user) {
+          return Promise.reject(new Error("Incorrect password or email"));
+        }
 
-    return bcrypt.compare(password, user.password).then((matched) => {
-      if (!matched) {
-        return Promise.reject(new Error("Incorrect password or email"));
-      }
+        return bcrypt.compare(password, user.password).then((matched) => {
+          if (!matched) {
+            return Promise.reject(new Error("Incorrect password or email"));
+          }
 
-      return user;
-    });
-  });
+          return user;
+        });
+      })
+  );
 };
 
 module.exports = mongoose.model("user", userSchema);

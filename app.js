@@ -6,6 +6,10 @@ const { NOT_FOUND } = require("./utils/errors");
 
 const app = express();
 
+const cors = require("cors");
+
+app.use(cors());
+
 mongoose
   .connect("mongodb://127.0.0.1:27017/wtwr_db")
   .then(() => {
