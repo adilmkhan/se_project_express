@@ -6,23 +6,9 @@ const {
   NOT_FOUND,
   INTERNAL_SERVER_ERROR,
   CONFLICT,
+  UNAUTHORIZED,
 } = require("../utils/errors");
 const JWT_SECRET = require("../utils/config");
-
-module.exports.getUsers = (req, res) => {
-  User.find({})
-    .then((users) => res.send({ data: users }))
-    .catch((err) => {
-      console.error(err);
-      if (err.name === "CastError") {
-        res.status(BAD_REQUEST).send({ message: "Invalid data" });
-      } else {
-        res
-          .status(INTERNAL_SERVER_ERROR)
-          .send({ message: "An error has occurred on the server." });
-      }
-    });
-};
 
 module.exports.updateProfile = (req, res) => {
   const { name, avatar } = req.body;
@@ -106,6 +92,12 @@ module.exports.createUser = (req, res) => {
 module.exports.login = (req, res) => {
   const { email, password } = req.body;
 
+  if (!email || !password) {
+    return res.status(BAD_REQUEST).send({
+      message: "Email and password are required",
+    });
+  }
+
   return User.findUserByCredentials(email, password)
     .then((user) => {
       res.send({
@@ -115,6 +107,13 @@ module.exports.login = (req, res) => {
       });
     })
     .catch((err) => {
-      res.status(BAD_REQUEST).send({ message: err.message });
+      if (err.message === "Incorrect password or email") {
+        return res.status(UNAUTHORIZED).send({
+          message: "Incorrect password or email",
+        });
+      }
+      return res.status(INTERNAL_SERVER_ERROR).send({
+        message: "An error occurred on the server",
+      });
     });
 };

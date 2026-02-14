@@ -17,13 +17,6 @@ mongoose
   })
   .catch(console.error);
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: "692b95e93f4fb21354a05cab",
-  };
-  next();
-});
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
