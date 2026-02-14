@@ -1,30 +1,82 @@
-# WTWR (What to Wear?) — Back-End API
+# WTWR Backend API
 
-This project is the server-side API for the WTWR application. It provides user management, clothing item management, and MongoDB data storage following the requirements of Project 12.
+## Overview
 
-## 📌 Description
+This project is the backend for the WTWR (What To Wear) application. It is a REST API built with Node.js, Express, and MongoDB that allows users to register, log in, and manage clothing items based on weather conditions (`hot`, `warm`, `cold`).
 
-The API supports:
+The server runs on:
 
-- Creating and retrieving users
-- Creating, retrieving, deleting, liking, and unliking clothing items
-- Validating URLs and request data
-- Handling errors with consistent status codes
-- Connecting to MongoDB at `mongodb://localhost:27017/wtwr_db`
+http://localhost:3001
 
-## 🚀 Technologies Used
+and connects to:
+
+mongodb://localhost:27017/wtwr_db
+
+---
+
+## Technologies Used
 
 - Node.js
-- Express.js
+- Express
 - MongoDB & Mongoose
-- Validator.js
+- JWT Authentication
+- bcrypt (password hashing)
+- validator (email & URL validation)
 - ESLint (airbnb-base config)
-- Prettier (code formatting)
+- Prettier
+- CORS
 
-## 🔧 Available Scripts
+---
 
-```bash
-npm start   # Runs the server on localhost:3001
-npm run dev # Runs server with hot reload
-npm run lint # Runs ESLint
-```
+## Authentication
+
+- Users register via `POST /signup`
+- Users log in via `POST /signin`
+- JWT tokens expire after 7 days
+- All routes are protected except:
+  - `POST /signup`
+  - `POST /signin`
+  - `GET /items`
+- Password hashes are never returned in responses
+
+---
+
+## API Routes
+
+### Users
+
+- `POST /signup`
+- `POST /signin`
+- `GET /users/me`
+- `PATCH /users/me`
+
+### Clothing Items
+
+- `GET /items`
+- `POST /items`
+- `DELETE /items/:id` (owner only)
+- `PUT /items/:id/likes`
+- `DELETE /items/:id/likes`
+
+Users cannot delete items they did not create.
+
+---
+
+## Error Handling
+
+The API returns appropriate status codes:
+
+- 400 — Invalid data or ID
+- 401 — Unauthorized
+- 403 — Forbidden
+- 404 — Not found
+- 409 — Duplicate email
+- 500 — Server error
+
+Error responses include only a `message` field.
+
+---
+
+## Project Pitch Video
+
+### Click **[here](https://www.loom.com/share/9261d829154a42f7a75e950adedda43d)** to view my app pitch recording.
