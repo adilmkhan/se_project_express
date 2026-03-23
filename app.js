@@ -10,6 +10,8 @@ const app = express();
 
 const errorHandler = require("./middlewares/error-handler");
 
+const { errors } = require("celebrate");
+
 app.use(cors());
 
 mongoose
@@ -27,6 +29,8 @@ app.use("/", require("./routes/index"));
 app.use((req, res) => {
   res.status(NOT_FOUND).json({ message: "Requested resource not found" });
 });
+
+app.use(errors());
 
 app.use(errorHandler);
 

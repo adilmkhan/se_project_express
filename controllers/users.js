@@ -23,12 +23,10 @@ module.exports.updateProfile = (req, res) => {
   )
     .then((user) => {
       if (!user) {
-        //refactored
         throw new NotFoundError("user not found");
       }
       return res.send(user);
     })
-    //refactored
     .catch((err) => {
       if (err.name === "ValidationError") {
         next(new BadRequestError("Invalid data"));
@@ -42,7 +40,6 @@ module.exports.getCurrentUser = (req, res) => {
   User.findById(req.user._id)
     .orFail()
     .then((user) => res.send({ data: user }))
-    //refactored
     .catch((err) => {
       console.error(err);
       if (err.name === "CastError") {
@@ -75,7 +72,6 @@ module.exports.createUser = (req, res) => {
         email,
       })
     )
-    //refactored
     .catch((err) => {
       console.error(err);
       if (err.code === 11000) {
@@ -92,25 +88,21 @@ module.exports.login = (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    //refactored
     return next(new BadRequestError("Email and password are required"));
   }
 
-  return (
-    User.findUserByCredentials(email, password)
-      .then((user) => {
-        res.send({
-          token: jwt.sign({ _id: user._id }, JWT_SECRET, {
-            expiresIn: "7d",
-          }),
-        });
-      })
-      //refactored
-      .catch((err) => {
-        if (err.message === "Incorrect password or email") {
-          return next(new UnauthorizedError("Incorrect password or email"));
-        }
-        return next(err);
-      })
-  );
+  return User.findUserByCredentials(email, password)
+    .then((user) => {
+      res.send({
+        token: jwt.sign({ _id: user._id }, JWT_SECRET, {
+          expiresIn: "7d",
+        }),
+      });
+    })
+    .catch((err) => {
+      if (err.message === "Incorrect password or email") {
+        return next(new UnauthorizedError("Incorrect password or email"));
+      }
+      return next(err);
+    });
 };
