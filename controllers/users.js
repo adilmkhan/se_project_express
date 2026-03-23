@@ -1,14 +1,13 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
-const {
-  BAD_REQUEST,
-  NOT_FOUND,
-  INTERNAL_SERVER_ERROR,
-  CONFLICT,
-  UNAUTHORIZED,
-} = require("../utils/errors");
 const JWT_SECRET = require("../utils/config");
+
+const BadRequestError = require("../errors/BadRequestError");
+const UnauthorizedError = require("../errors/UnauthorizedError");
+const ForbiddenError = require("../errors/ForbiddenError");
+const NotFoundError = require("../errors/NotFoundError");
+const ConflictError = require("../errors/ConflictError");
 
 module.exports.updateProfile = (req, res) => {
   const { name, avatar } = req.body;
@@ -24,15 +23,17 @@ module.exports.updateProfile = (req, res) => {
   )
     .then((user) => {
       if (!user) {
-        return res.status(NOT_FOUND).send({ message: "User not found" });
+        //refactored
+        throw new NotFoundError("user not found");
       }
       return res.send(user);
     })
+    //refactored
     .catch((err) => {
       if (err.name === "ValidationError") {
-        res.status(BAD_REQUEST).send({ message: "Invalid data" });
+        next(new BadRequestError("Invalid data"));
       } else {
-        res.status(INTERNAL_SERVER_ERROR).send({ message: "Server error" });
+        next(err);
       }
     });
 };
@@ -41,16 +42,15 @@ module.exports.getCurrentUser = (req, res) => {
   User.findById(req.user._id)
     .orFail()
     .then((user) => res.send({ data: user }))
+    //refactored
     .catch((err) => {
       console.error(err);
       if (err.name === "CastError") {
-        res.status(BAD_REQUEST).send({ message: "Invalid data" });
+        next(BadRequestError("Invalid data"));
       } else if (err.name === "DocumentNotFoundError") {
-        res.status(NOT_FOUND).send({ message: "Invalid data" });
+        next(new NotFoundError("Invalid data"));
       } else {
-        res
-          .status(INTERNAL_SERVER_ERROR)
-          .send({ message: "An error has occurred on the server." });
+        next(err);
       }
     });
 };
@@ -75,16 +75,15 @@ module.exports.createUser = (req, res) => {
         email,
       })
     )
+    //refactored
     .catch((err) => {
       console.error(err);
       if (err.code === 11000) {
-        res.status(CONFLICT).send({ message: "Email already exists" });
+        next(new ConflictError("Email already exists"));
       } else if (err.name === "ValidationError") {
-        res.status(BAD_REQUEST).send({ message: "Invalid data" });
+        next(new BadRequestError("Invalid data"));
       } else {
-        res
-          .status(INTERNAL_SERVER_ERROR)
-          .send({ message: "An error has occurred on the server." });
+        next(err);
       }
     });
 };
@@ -93,27 +92,25 @@ module.exports.login = (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    return res.status(BAD_REQUEST).send({
-      message: "Email and password are required",
-    });
+    //refactored
+    return next(new BadRequestError("Email and password are required"));
   }
 
-  return User.findUserByCredentials(email, password)
-    .then((user) => {
-      res.send({
-        token: jwt.sign({ _id: user._id }, JWT_SECRET, {
-          expiresIn: "7d",
-        }),
-      });
-    })
-    .catch((err) => {
-      if (err.message === "Incorrect password or email") {
-        return res.status(UNAUTHORIZED).send({
-          message: "Incorrect password or email",
+  return (
+    User.findUserByCredentials(email, password)
+      .then((user) => {
+        res.send({
+          token: jwt.sign({ _id: user._id }, JWT_SECRET, {
+            expiresIn: "7d",
+          }),
         });
-      }
-      return res.status(INTERNAL_SERVER_ERROR).send({
-        message: "An error occurred on the server",
-      });
-    });
+      })
+      //refactored
+      .catch((err) => {
+        if (err.message === "Incorrect password or email") {
+          return next(new UnauthorizedError("Incorrect password or email"));
+        }
+        return next(err);
+      })
+  );
 };
