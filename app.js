@@ -12,6 +12,8 @@ const errorHandler = require("./middlewares/error-handler");
 
 const { errors } = require("celebrate");
 
+const { requestLogger, errorLogger } = require("./middlewares/logger");
+
 app.use(cors());
 
 mongoose
@@ -24,7 +26,11 @@ mongoose
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use(requestLogger);
+
 app.use("/", require("./routes/index"));
+
+app.use(errorLogger);
 
 app.use((req, res) => {
   res.status(NOT_FOUND).json({ message: "Requested resource not found" });
