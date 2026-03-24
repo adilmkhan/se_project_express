@@ -2,6 +2,8 @@ const path = require("path");
 const express = require("express");
 const mongoose = require("mongoose");
 
+require("dotenv").config();
+
 const cors = require("cors");
 
 const { NOT_FOUND } = require("./utils/errors");
