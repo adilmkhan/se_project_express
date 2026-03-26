@@ -77,6 +77,54 @@ Error responses include only a `message` field.
 
 ---
 
+## Cloud Deployment
+
+### Server Infrastructure
+
+- Provisioned a cloud-based virtual server to host the full-stack application.
+- Configured the environment to run a Node.js backend and serve the React frontend.
+- Managed application processes using **PM2** to ensure uptime and automatic restarts.
+
+### Reverse Proxy Configuration
+
+- Configured **Nginx** as a reverse proxy to route external traffic to the backend application.
+- Improved performance and security by handling incoming HTTP/HTTPS requests at the server layer.
+
+### Secure HTTPS Communication
+
+- Implemented **SSL certificates** to enable secure HTTPS connections.
+- Ensured encrypted communication between users and the server.
+
+### Domain & DNS Setup
+
+- Connected the application to a **custom domain**.
+- Configured DNS records to route traffic from the domain to the cloud server.
+
+### Application Integration
+
+- Deployed both **React frontend and Express backend** to the server.
+- Configured **CORS** to allow secure communication between frontend and backend services.
+
+### Process Reliability & Monitoring
+
+- Used **PM2 process manager** to keep the Node.js server running in production.
+- Implemented **request and error logging** to track runtime issues and assist with debugging.
+
+### Production Configuration
+
+- Secured sensitive configuration using **environment variables**.
+- Ensured database connectivity and application services operate correctly in the production environment.
+
+## Domain Name
+
+- Domain name: wttowear.blinklab.com
+
+- ### Click **[here](https://www.wttowear.blinklab.com/)** to view my full-stack application deployed on the GCP server instance
+
+## Front-end Repo
+
+### Click **[here](https://github.com/adilmkhan/se_project_react)** to be directed to the REACT front-end github repo.
+
 ## Project Pitch Video
 
-### Click **[here](https://www.loom.com/share/9261d829154a42f7a75e950adedda43d)** to view my app pitch recording.
+### Click **[here](https://www.loom.com/share/45ee20aaaaf545568a3abea2ea0b97b3)** to view my app pitch recording.
