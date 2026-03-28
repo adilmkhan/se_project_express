@@ -17,8 +17,8 @@ router.post("/signup", validateUserRegistration, createUser);
 router.use("/items", require("./clothingItems"));
 router.use("/users", auth, require("./users"));
 
-router.use((req, res, next) => {
-  return next(new NotFoundError("Requested resource not found"));
-});
+router.use((req, res, next) =>
+  next(new NotFoundError("Requested resource not found"))
+);
 
 module.exports = router;
