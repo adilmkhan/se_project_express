@@ -10,7 +10,6 @@ module.exports.getclothingItems = (req, res, next) => {
   ClothingItem.find({})
     .then((items) => res.send({ data: items }))
     .catch((err) => {
-      console.error(err);
       if (err.name === "CastError") {
         next(new BadRequestError("Invalid data"));
       } else {
@@ -20,13 +19,11 @@ module.exports.getclothingItems = (req, res, next) => {
 };
 
 module.exports.createclothingItem = (req, res, next) => {
-  console.log(req.user._id);
   const { name, weather, imageUrl } = req.body;
   const owner = req.user._id;
   ClothingItem.create({ name, weather, imageUrl, owner })
     .then((item) => res.status(201).send({ data: item }))
     .catch((err) => {
-      console.error(err);
       if (err.name === "ValidationError") {
         next(new BadRequestError("Invalid data"));
       } else {
@@ -48,7 +45,6 @@ module.exports.deleteclothingItem = (req, res, next) => {
       res.send({ data: deletedItem });
     })
     .catch((err) => {
-      console.error(err);
       if (err.message === "Operation not Allowed") {
         next(new ForbiddenError("Operation not allowed"));
       } else if (err.name === "CastError") {
@@ -70,7 +66,6 @@ module.exports.likeclothingItem = (req, res, next) =>
     .orFail()
     .then((item) => res.send({ data: item }))
     .catch((err) => {
-      console.error(err);
       if (err.name === "CastError") {
         next(new BadRequestError("Invalid data"));
       } else if (err.name === "DocumentNotFoundError") {
@@ -89,7 +84,6 @@ module.exports.dislikeclothingItem = (req, res, next) =>
     .orFail()
     .then((item) => res.send({ data: item }))
     .catch((err) => {
-      console.error(err);
       if (err.name === "CastError") {
         next(new BadRequestError("Invalid data"));
       } else if (err.name === "DocumentNotFoundError") {

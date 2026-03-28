@@ -41,7 +41,6 @@ module.exports.getCurrentUser = (req, res, next) => {
     .orFail()
     .then((user) => res.send({ data: user }))
     .catch((err) => {
-      console.error(err);
       if (err.name === "CastError") {
         next(new BadRequestError("Invalid data"));
       } else if (err.name === "DocumentNotFoundError") {
@@ -73,7 +72,6 @@ module.exports.createUser = (req, res, next) => {
       })
     )
     .catch((err) => {
-      console.error(err);
       if (err.code === 11000) {
         next(new ConflictError("Email already exists"));
       } else if (err.name === "ValidationError") {
