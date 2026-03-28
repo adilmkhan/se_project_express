@@ -6,7 +6,7 @@ const ForbiddenError = require("../errors/ForbiddenError");
 const NotFoundError = require("../errors/NotFoundError");
 const ConflictError = require("../errors/ConflictError");
 
-module.exports.getclothingItems = (req, res) => {
+module.exports.getclothingItems = (req, res, next) => {
   ClothingItem.find({})
     .then((items) => res.send({ data: items }))
     .catch((err) => {
@@ -19,12 +19,12 @@ module.exports.getclothingItems = (req, res) => {
     });
 };
 
-module.exports.createclothingItem = (req, res) => {
+module.exports.createclothingItem = (req, res, next) => {
   console.log(req.user._id);
   const { name, weather, imageUrl } = req.body;
   const owner = req.user._id;
   ClothingItem.create({ name, weather, imageUrl, owner })
-    .then((item) => res.send({ data: item }))
+    .then((item) => res.status(201).send({ data: item }))
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
@@ -35,7 +35,7 @@ module.exports.createclothingItem = (req, res) => {
     });
 };
 
-module.exports.deleteclothingItem = (req, res) => {
+module.exports.deleteclothingItem = (req, res, next) => {
   ClothingItem.findById(req.params.itemId)
     .orFail()
     .then((item) => {
@@ -61,7 +61,7 @@ module.exports.deleteclothingItem = (req, res) => {
     });
 };
 
-module.exports.likeclothingItem = (req, res) =>
+module.exports.likeclothingItem = (req, res, next) =>
   ClothingItem.findByIdAndUpdate(
     req.params.itemId,
     { $addToSet: { likes: req.user._id } },
@@ -80,7 +80,7 @@ module.exports.likeclothingItem = (req, res) =>
       }
     });
 
-module.exports.dislikeclothingItem = (req, res) =>
+module.exports.dislikeclothingItem = (req, res, next) =>
   ClothingItem.findByIdAndUpdate(
     req.params.itemId,
     { $pull: { likes: req.user._id } },

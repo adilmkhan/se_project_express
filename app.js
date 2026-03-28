@@ -1,12 +1,12 @@
-const path = require("path");
-const express = require("express");
-const mongoose = require("mongoose");
-
 require("dotenv").config();
 
-const cors = require("cors");
+const path = require("path");
 
-const { NOT_FOUND } = require("./utils/errors");
+const express = require("express");
+
+const mongoose = require("mongoose");
+
+const cors = require("cors");
 
 const app = express();
 
@@ -39,10 +39,6 @@ app.use(requestLogger);
 app.use("/", require("./routes/index"));
 
 app.use(errorLogger);
-
-app.use((req, res) => {
-  res.status(NOT_FOUND).json({ message: "Requested resource not found" });
-});
 
 app.use(errors());
 

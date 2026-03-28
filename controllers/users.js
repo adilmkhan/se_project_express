@@ -9,7 +9,7 @@ const ForbiddenError = require("../errors/ForbiddenError");
 const NotFoundError = require("../errors/NotFoundError");
 const ConflictError = require("../errors/ConflictError");
 
-module.exports.updateProfile = (req, res) => {
+module.exports.updateProfile = (req, res, next) => {
   const { name, avatar } = req.body;
   const userId = req.user._id;
 
@@ -36,14 +36,14 @@ module.exports.updateProfile = (req, res) => {
     });
 };
 
-module.exports.getCurrentUser = (req, res) => {
+module.exports.getCurrentUser = (req, res, next) => {
   User.findById(req.user._id)
     .orFail()
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       console.error(err);
       if (err.name === "CastError") {
-        next(BadRequestError("Invalid data"));
+        next(new BadRequestError("Invalid data"));
       } else if (err.name === "DocumentNotFoundError") {
         next(new NotFoundError("Invalid data"));
       } else {
@@ -52,7 +52,7 @@ module.exports.getCurrentUser = (req, res) => {
     });
 };
 
-module.exports.createUser = (req, res) => {
+module.exports.createUser = (req, res, next) => {
   const { name, avatar, email, password } = req.body;
   bcrypt
     .hash(password, 10)
@@ -65,7 +65,7 @@ module.exports.createUser = (req, res) => {
       })
     )
     .then((user) =>
-      res.send({
+      res.status(201).send({
         _id: user._id,
         name,
         avatar,
@@ -84,7 +84,7 @@ module.exports.createUser = (req, res) => {
     });
 };
 
-module.exports.login = (req, res) => {
+module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
